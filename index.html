@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>新廊华小 - 立春赞助登记</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥚</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Nunito:wght@400;700;900&display=swap');
+        
+        :root { --spring-green: #dcfce7; --leaf-green: #22c55e; --egg-yellow: #fbbf24; }
+        body { font-family: 'Noto Sans SC', 'Nunito', sans-serif; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); color: #166534; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        .serif-font { font-family: 'Noto Serif SC', serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(22, 101, 52, 0.08); transition: all 0.3s ease; }
+        .glass-box { background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.6); backdrop-filter: blur(4px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .leaf { position: absolute; pointer-events: none; z-index: 0; animation: breeze 15s linear infinite; opacity: 0.4; }
+        @keyframes breeze { 0% { transform: translate(0, -10%) rotate(0deg); opacity: 0; } 10% { opacity: 0.4; } 90% { opacity: 0.4; } 100% { transform: translate(100vw, 110vh) rotate(720deg); opacity: 0; } }
+        .progress-bar-glow { box-shadow: 0 0 15px rgba(250, 204, 21, 0.5); background-size: 200% 100%; animation: shimmer 2s linear infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .lang-switch { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(22, 101, 52, 0.1); backdrop-filter: blur(4px); }
+        .wobble-egg { animation: wobble 4s ease-in-out infinite; transform-origin: bottom center; }
+        @keyframes wobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
+        .chip-btn { transition: all 0.2s; border: 1px solid #dcfce7; }
+        .chip-btn:active { transform: scale(0.95); }
+        .chip-btn:hover { border-color: #22c55e; background-color: #f0fdf4; }
+        .countdown-num { font-variant-numeric: tabular-nums; }
+        select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23166534' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+        .spinner { border: 3px solid rgba(34, 197, 94, 0.3); border-left-color: #22c55e; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .closed-overlay { pointer-events: none; opacity: 0.5; filter: grayscale(1); }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- 右上角工具栏 -->
+    <div class="fixed top-4 right-4 z-50 flex gap-2">
+        <button onclick="toggleLanguage()" class="lang-switch px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transition-transform active:scale-95 hover:bg-white h-10">
+            <span class="text-xs font-bold text-green-800" id="langLabel">CN / BM</span>
+            <div class="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center text-[8px] text-white font-bold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
+            </div>
+        </button>
+        <button onclick="toggleView('admin')" class="lang-switch w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-white text-green-800" title="Admin">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </button>
+    </div>
+
+    <div id="leaf-container"></div>
+
+    <!-- 顶部 -->
+    <div class="relative pt-10 pb-2 px-6 text-center overflow-hidden">
+        <div class="relative z-10 transition-all duration-500">
+            <div class="mb-6 border-b border-green-800/10 pb-4">
+                <h1 class="text-3xl md:text-4xl font-black text-green-900 tracking-wider serif-font mb-2">新廊华小</h1>
+                <h2 class="text-sm md:text-base font-bold text-green-700 tracking-[0.15em] font-sans">SJK (C) LADANG GRISEK</h2>
+            </div>
+            <span data-i18n="headerTag" class="inline-block px-4 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold tracking-widest mb-3">立春 · 二十四节气</span>
+            <h3 data-i18n="mainTitle" class="text-2xl md:text-3xl font-black text-green-800 mb-6 leading-tight serif-font">春风送暖入屠苏</h3>
+            
+            <!-- 活动日期 (新增位置) -->
+            <div class="mb-6 inline-block bg-white/40 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/50 shadow-sm">
+                <p class="text-green-800 font-bold text-sm flex items-center justify-center gap-2">
+                    <span>🗓️</span> <span data-i18n="eventDateInfo">活动：2月4日 (三) 8:00 AM</span>
+                </p>
+            </div>
+
+            <!-- 倒计时 -->
+            <div class="flex flex-col items-center mb-8">
+                <p data-i18n="countdownLabel" class="text-xs font-bold text-green-600 mb-2 uppercase tracking-widest">距离立春活动还有</p>
+                <div class="flex gap-2 text-green-800">
+                    <div class="glass-box rounded-xl p-2 w-14 flex flex-col items-center">
+                        <span id="cd-days" class="text-xl font-black countdown-num">0</span>
+                        <span data-i18n="labelDay" class="text-[9px] font-bold opacity-60">天</span>
+                    </div>
+                    <div class="text-xl font-bold pt-1">:</div>
+                    <div class="glass-box rounded-xl p-2 w-14 flex flex-col items-center">
+                        <span id="cd-hours" class="text-xl font-black countdown-num">00</span>
+                        <span data-i18n="labelHour" class="text-[9px] font-bold opacity-60">时</span>
+                    </div>
+                    <div class="text-xl font-bold pt-1">:</div>
+                    <div class="glass-box rounded-xl p-2 w-14 flex flex-col items-center">
+                        <span id="cd-mins" class="text-xl font-black countdown-num">00</span>
+                        <span data-i18n="labelMin" class="text-[9px] font-bold opacity-60">分</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 示意图 -->
+    <div class="relative w-full flex flex-col items-center justify-center z-20 mb-8 px-6">
+        <div class="w-40 h-40 relative mb-4">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-xl">
+                <circle cx="100" cy="100" r="70" fill="#fef08a" opacity="0.4" />
+                <circle cx="100" cy="100" r="55" fill="#fde047" opacity="0.3" />
+                <path d="M40,160 Q100,170 160,160" stroke="#4ade80" stroke-width="3" fill="none" opacity="0.6"/>
+                <path d="M70,160 L75,150 M120,160 L125,152 M90,163 L90,155" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                <ellipse cx="100" cy="158" rx="20" ry="4" fill="#14532d" opacity="0.2" />
+                <g class="wobble-egg">
+                    <defs><radialGradient id="eggGrad" cx="30%" cy="30%" r="70%"><stop offset="0%" style="stop-color:#fffcEB;stop-opacity:1" /><stop offset="100%" style="stop-color:#fcd34d;stop-opacity:1" /></radialGradient></defs>
+                    <path d="M100,40 C125,40 140,80 140,115 C140,150 122,160 100,160 C78,160 60,150 60,115 C60,80 75,40 100,40 Z" fill="url(#eggGrad)" />
+                    <ellipse cx="85" cy="70" rx="10" ry="15" fill="white" opacity="0.6" transform="rotate(-20 85 70)" />
+                </g>
+            </svg>
+        </div>
+        <div class="bg-white/60 backdrop-blur-sm border border-green-100 rounded-2xl p-4 text-center max-w-sm shadow-sm">
+            <h4 data-i18n="meaningTitle" class="text-green-800 font-bold text-sm mb-1">🌟 立蛋寓意</h4>
+            <p data-i18n="meaningText" class="text-xs text-green-700/80 leading-relaxed">象征接收天地阳气，预示全年好运、学业进步、平安吉祥。</p>
+        </div>
+    </div>
+
+    <main class="max-w-md mx-auto px-5 relative z-10">
+        <!-- 进度条 -->
+        <div class="glass-card rounded-[2.5rem] p-8 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <p data-i18n="statsLabel" class="text-[10px] font-bold text-green-800/50 uppercase tracking-[0.2em]">已汇聚心意</p>
+                    <div class="flex items-baseline">
+                        <span id="currentCount" class="text-5xl font-black text-green-800 tracking-tighter">0</span>
+                        <span data-i18n="statsUnit" class="text-green-800/40 font-bold ml-2 text-sm">/ 600 颗</span>
+                    </div>
+                </div>
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-inner">
+                    <span id="percentLabel" class="text-lg font-black text-green-600">0%</span>
+                </div>
+            </div>
+            <div class="relative w-full h-4 bg-green-50 rounded-full overflow-hidden mb-4 border border-green-100/50">
+                <div id="progressBar" class="progress-bar-glow h-full rounded-full bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 transition-all duration-1000 ease-out" style="width: 0%"></div>
+            </div>
+            <p id="progressStatus" class="text-center text-xs font-medium text-green-700/60 italic tracking-wide">
+                <span class="spinner inline-block align-middle mr-1"></span> 数据同步中...
+            </p>
+        </div>
+
+        <!-- 登记表单 (ID: input-area) -->
+        <div id="parent-form" class="glass-card rounded-[2.5rem] p-8 mb-8">
+            <h2 class="text-xl font-black text-green-900 mb-8 flex items-center serif-font">
+                <span class="w-2 h-6 bg-green-500 rounded-full mr-3"></span>
+                <span data-i18n="formTitle">赞助登记</span>
+            </h2>
+            
+            <div class="space-y-6" id="input-area">
+                <div class="space-y-6">
+                    <div>
+                        <label data-i18n="labelName" class="block text-[10px] font-black text-green-800/40 uppercase tracking-widest mb-2 ml-1">学生姓名</label>
+                        <input type="text" id="studentName" class="w-full px-6 py-4 rounded-2xl bg-white/50 border border-green-100 outline-none text-green-800 font-bold placeholder:text-green-200/50 focus:bg-white transition-all" placeholder="">
+                    </div>
+                    <div>
+                        <label data-i18n="labelClass" class="block text-[10px] font-black text-green-800/40 uppercase tracking-widest mb-2 ml-1">所属班级</label>
+                        <select id="studentClass" class="w-full px-6 py-4 rounded-2xl bg-white/50 border border-green-100 outline-none text-green-900 font-bold focus:bg-white transition-all cursor-pointer">
+                            <option value="" disabled selected data-i18n="phClass">请选择班级</option>
+                            <option value="3A">3A</option><option value="3B">3B</option><option value="3C">3C</option><option value="3D">3D</option><option value="3E">3E</option>
+                            <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option><option value="4D">4D</option>
+                            <option value="5A">5A</option><option value="5B">5B</option><option value="5C">5C</option><option value="5D">5D</option><option value="5E">5E</option>
+                            <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label data-i18n="labelQty" class="block text-[10px] font-black text-green-800/40 uppercase tracking-widest mb-2 ml-1">赞助数量 (颗)</label>
+                    <div class="relative mb-3">
+                        <input type="number" id="eggCount" class="w-full px-6 py-4 rounded-2xl bg-white border border-green-100 outline-none text-green-900 font-black text-2xl" placeholder="5 / 10 / 30 / 60">
+                        <span class="absolute right-6 top-4 text-green-200 font-bold">🥚</span>
+                    </div>
+                    <div class="flex gap-2 justify-between mb-4">
+                        <button onclick="setQty(10)" class="chip-btn flex-1 bg-white/60 py-2 rounded-xl text-xs font-bold text-green-700 hover:shadow-sm">10</button>
+                        <button onclick="setQty(30)" class="chip-btn flex-1 bg-white/60 py-2 rounded-xl text-xs font-bold text-green-700 hover:shadow-sm">30</button>
+                        <button onclick="setQty(60)" class="chip-btn flex-1 bg-white/60 py-2 rounded-xl text-xs font-bold text-green-700 hover:shadow-sm">60</button>
+                    </div>
+                    
+                    <!-- 提交说明 (新增) -->
+                    <p data-i18n="msgBringEggs" class="text-xs text-green-700/80 leading-relaxed bg-green-50 p-3 rounded-lg border border-green-100 mb-2">
+                        请于 3/2（二） 让孩子将鸡蛋带到学校，交给老师统一收集。
+                    </p>
+                </div>
+
+                <button onclick="handleSponsorship()" id="submitBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-green-900/10 active:scale-95 transition-all mt-6 text-lg tracking-widest overflow-hidden relative group">
+                    <span data-i18n="btnSubmit" class="relative z-10 group-hover:tracking-[0.2em] transition-all">递交这份心意</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full hover:animate-[shimmer_1.5s_infinite]"></div>
+                </button>
+                
+                <!-- 截止通告 (默认隐藏) -->
+                <div id="closed-msg" class="hidden text-center bg-red-100 text-red-600 font-bold py-4 rounded-xl">
+                    ⚠️ <span data-i18n="msgClosed">登记已截止 / Pendaftaran Ditutup</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 防破损小贴士 -->
+        <div id="tips-card" class="glass-card rounded-[2.5rem] p-6 mb-24 border border-yellow-200 bg-yellow-50/40">
+            <h3 class="font-black text-green-900 mb-4 flex items-center">
+                <span class="text-xl mr-2">📦</span>
+                <span data-i18n="tipsTitle">防破损小贴士</span>
+            </h3>
+            <ul class="space-y-3 text-xs md:text-sm text-green-800/80 font-medium">
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2 mt-0.5">●</span>
+                    <span data-i18n="tip1">建议使用原装蛋托，并用胶带封口。</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2 mt-0.5">●</span>
+                    <span data-i18n="tip2">如果数量较少，可用旧报纸包裹放入塑料盒。</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2 mt-0.5">●</span>
+                    <span data-i18n="tip3">在包装外写上学生姓名和班级，方便老师对账。</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 管理后台 (隐藏) -->
+        <div id="admin-panel" class="hidden glass-card rounded-[2.5rem] p-8 mb-24 animate-in fade-in slide-in-from-bottom-4">
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center gap-3">
+                    <!-- 返回按钮 -->
+                    <button onclick="toggleView('parent')" class="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </button>
+                    <h2 data-i18n="adminTitle" class="text-xl font-black text-green-900 serif-font">管理后台</h2>
+                </div>
+                <button onclick="downloadCSV()" data-i18n="btnExport" class="text-xs font-bold bg-green-100 text-green-700 px-4 py-2 rounded-xl">导出 CSV</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="text-green-800/40 font-black uppercase text-[10px] tracking-widest">
+                            <th data-i18n="thClass" class="pb-4">班级</th>
+                            <th data-i18n="thName" class="pb-4">姓名</th>
+                            <th data-i18n="thQty" class="pb-4 text-center">数量</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminList" class="divide-y divide-green-50"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 px-8 py-4 bg-green-900/90 text-white rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-500 z-[1000] backdrop-blur-md font-bold text-sm text-center w-max max-w-[90%]"></div>
+
+    <script>
+        // *** 重要配置 ***
+        // 请替换为您的 Google Apps Script Web App URL
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_YOUR_SCRIPT_ID_HERE/exec";
+        
+        // 自动关闭配置 (2026年2月2日 21:00)
+        const CLOSING_TIME = new Date("2026-02-02T21:00:00").getTime();
+        const EVENT_DATE = new Date("2026-02-04T08:00:00").getTime();
+        const TARGET = 600;
+        
+        let curLang = 'zh';
+        let data = [];
+        let isLoading = false;
+
+        const I18N = {
+            zh: {
+                headerTag: "立春 · 二十四节气", mainTitle: "春风送暖入屠苏", countdownLabel: "距离立春活动还有",
+                eventDateInfo: "活动：2月4日 (三) 8:00 AM",
+                labelDay: "天", labelHour: "时", labelMin: "分", meaningTitle: "🌟 立蛋寓意",
+                meaningText: "象征接收天地阳气，预示全年好运、学业进步、平安吉祥。", statsLabel: "已汇聚心意",
+                statsUnit: "/ 600 颗", statusEmpty: "立春时节，静候春芽破土...", statusProg: "春风已起，还差 {diff} 颗便可满园春色！",
+                statusDone: "🎉 感谢支持！春满校园，目标已达成！", formTitle: "赞助登记", labelName: "学生姓名",
+                phName: "姓名", labelClass: "所属班级", phClass: "请选择班级", labelQty: "赞助数量 (颗)",
+                phEggCount: "5 / 10 / 30 / 60", btnSubmit: "递交这份心意", adminTitle: "管理后台", btnExport: "导出 CSV",
+                thClass: "班级", thName: "姓名", thQty: "数量", thAction: "操作", btnRemove: "移除",
+                navRegister: "立春登记", navAdmin: "老师管理", toastIncomplete: "请完整填写赞助资料 🌱",
+                toastSubmitting: "提交中...", toastSuccess: "提交成功！感谢您支持文化传承 ✨", toastFail: "提交失败，请稍后重试",
+                alertPass: "请输入管理密码：", alertWrongPass: "密码错误", confirmRemove: "Google 表格版不支持直接删除，请在表格中操作",
+                tipsTitle: "防破损小贴士", tip1: "建议使用原装蛋托，并用胶带封口。",
+                tip2: "如果数量较少，可用旧报纸包裹放入塑料盒。", tip3: "在包装外写上学生姓名和班级，方便老师对账。",
+                msgClosed: "登记已截止",
+                msgBringEggs: "请于 3/2（二） 让孩子将鸡蛋带到学校，交给老师统一收集。"
+            },
+            bm: {
+                headerTag: "Li Chun · 24 Musim Suria", mainTitle: "Kehangatan Musim Bunga", countdownLabel: "MASA KE ACARA LI CHUN",
+                eventDateInfo: "Acara: 4 Feb (Rabu) 8:00 Pagi",
+                labelDay: "Hari", labelHour: "Jam", labelMin: "Minit", meaningTitle: "🌟 Simbolik",
+                meaningText: "Melambangkan keseimbangan tenaga alam, membawa tuah, kejayaan akademik, dan keharmonian.", statsLabel: "Sumbangan Terkumpul",
+                statsUnit: "/ 600 Biji", statusEmpty: "Musim bunga tiba, menanti benih bercambah...", statusProg: "Bayu bertiup, kurang {diff} biji lagi untuk capai sasaran!",
+                statusDone: "🎉 Terima kasih! Sasaran tercapai dengan jayanya!", formTitle: "Pendaftaran Penajaan", labelName: "Nama Murid",
+                phName: "Nama Penuh", labelClass: "Kelas", phClass: "Pilih Kelas", labelQty: "Bilangan Tajaan (Biji)",
+                phEggCount: "5 / 10 / 30 / 60", btnSubmit: "Hantar Sumbangan", adminTitle: "Panel Admin", btnExport: "Eksport CSV",
+                thClass: "Kelas", thName: "Nama", thQty: "Bil.", thAction: "Tindakan", btnRemove: "Hapus",
+                navRegister: "Daftar", navAdmin: "Admin Guru", toastIncomplete: "Sila isi maklumat lengkap 🌱",
+                toastSubmitting: "Sedang hantar...", toastSuccess: "Berjaya! Terima kasih atas sokongan ✨", toastFail: "Gagal, sila cuba lagi nanti",
+                alertPass: "Masukkan kata laluan admin:", alertWrongPass: "Kata laluan salah", confirmRemove: "Versi ini tidak sokong padam, sila edit di Google Sheet",
+                tipsTitle: "Tips Pembungkusan", tip1: "Gunakan sarang telur asal dan lekatkan dengan pita pelekat.",
+                tip2: "Jika kuantiti sedikit, balut dengan surat khabar dan letak dalam bekas plastik.",
+                tip3: "Tulis nama murid dan kelas pada bungkusan untuk memudahkan semakan guru.",
+                msgClosed: "Pendaftaran Ditutup",
+                msgBringEggs: "Sila bawa telur ke sekolah pada 3/2 (Selasa) dan serahkan kepada guru."
+            }
+        };
+
+        function createLeaves() {
+            const container = document.getElementById('leaf-container');
+            const svgLeaf = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L4.5 12C3 14 3 17 5 19C7 21 10 21 12 19C14 21 17 21 19 19C21 17 21 14 19.5 12L12 2Z" fill="#4ade80"/></svg>`;
+            for(let i=0; i<15; i++) {
+                const l = document.createElement('div');
+                l.className = 'leaf';
+                l.innerHTML = svgLeaf;
+                l.style.left = Math.random() * 100 + 'vw';
+                l.style.top = Math.random() * -100 + 'vh';
+                l.style.animationDelay = Math.random() * 10 + 's';
+                l.style.transform = `scale(${0.5 + Math.random()})`;
+                container.appendChild(l);
+            }
+        }
+        createLeaves();
+
+        // 检查截止时间
+        function checkClosingTime() {
+            const now = new Date().getTime();
+            if (now > CLOSING_TIME) {
+                // 锁定输入区域
+                const inputArea = document.getElementById('input-area');
+                const btn = document.getElementById('submitBtn');
+                const msg = document.getElementById('closed-msg');
+                
+                // 将输入区域变灰且不可点击
+                inputArea.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+                inputArea.classList.add('closed-overlay');
+                
+                // 隐藏提交按钮，显示截止信息
+                btn.style.display = 'none';
+                msg.classList.remove('hidden');
+            }
+        }
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = EVENT_DATE - now;
+            if (diff <= 0) {
+                ['cd-days', 'cd-hours', 'cd-mins'].forEach(id => document.getElementById(id).innerText = "00");
+                return;
+            }
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('cd-days').innerText = days;
+            document.getElementById('cd-hours').innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById('cd-mins').innerText = minutes < 10 ? "0" + minutes : minutes;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        async function fetchData() {
+            isLoading = true;
+            try {
+                if(SCRIPT_URL.includes("YOUR_SCRIPT_ID")) {
+                    console.log("Demo Mode");
+                    data = [
+                        {class: "3A", name: "演示数据 (Demo)", qty: 30},
+                        {class: "6B", name: "张同学", qty: 10}
+                    ];
+                } else {
+                    const res = await fetch(SCRIPT_URL);
+                    data = await res.json();
+                }
+                render();
+            } catch (e) { console.error(e); } finally { isLoading = false; render(); }
+        }
+        fetchData();
+        setInterval(fetchData, 10000);
+
+        function toggleLanguage() {
+            curLang = curLang === 'zh' ? 'bm' : 'zh';
+            updatePageLanguage();
+            render();
+        }
+
+        function updatePageLanguage() {
+            const t = I18N[curLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(t[key]) el.innerText = t[key];
+            });
+            document.getElementById('studentName').placeholder = t.phName;
+            document.getElementById('eggCount').placeholder = t.phEggCount;
+            document.querySelector('#studentClass option[disabled]').innerText = t.phClass;
+            document.getElementById('langLabel').innerText = curLang === 'zh' ? '中文 / BM' : 'CN / BM';
+        }
+
+        window.setQty = (val) => document.getElementById('eggCount').value = val;
+
+        function fireConfetti() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        function render() {
+            const t = I18N[curLang];
+            const total = data.reduce((s, i) => s + (parseInt(i.qty) || 0), 0);
+            const perc = Math.min(Math.floor((total/TARGET)*100), 100);
+            
+            document.getElementById('currentCount').innerText = total;
+            document.getElementById('percentLabel').innerText = perc + '%';
+            document.getElementById('progressBar').style.width = perc + '%';
+            
+            const status = document.getElementById('progressStatus');
+            if (isLoading && total === 0) {
+                 status.innerHTML = '<span class="spinner inline-block align-middle mr-1"></span> Loading...';
+            } else if(total === 0) {
+                status.innerText = t.statusEmpty;
+            } else if(total < TARGET) {
+                status.innerText = t.statusProg.replace('{diff}', TARGET-total);
+            } else {
+                status.innerText = t.statusDone;
+            }
+
+            const sorted = [...data].sort((a,b) => a.class.localeCompare(b.class));
+            document.getElementById('adminList').innerHTML = sorted.map(i => `
+                <tr class="group">
+                    <td class="py-4 font-bold text-green-900">${i.class}</td>
+                    <td class="py-4 text-green-700">${i.name}</td>
+                    <td class="py-4 text-center font-black text-green-600">${i.qty}</td>
+                </tr>
+            `).join('');
+        }
+
+        window.handleSponsorship = async () => {
+            const t = I18N[curLang];
+            const name = document.getElementById('studentName').value;
+            const cls = document.getElementById('studentClass').value;
+            const qty = document.getElementById('eggCount').value;
+
+            if(!name || !cls || !qty) return showToast(t.toastIncomplete);
+            if(SCRIPT_URL.includes("YOUR_SCRIPT_ID")) { alert("请配置 Google Script URL！"); return; }
+
+            const btn = document.getElementById('submitBtn');
+            const originalText = document.querySelector('[data-i18n="btnSubmit"]').innerText;
+            btn.disabled = true; 
+            document.querySelector('[data-i18n="btnSubmit"]').innerText = t.toastSubmitting;
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, class: cls, qty: qty })
+                });
+                data.push({ name: name, class: cls, qty: qty });
+                render(); fireConfetti();
+                document.getElementById('studentName').value = "";
+                document.getElementById('eggCount').value = "";
+                showToast(t.toastSuccess);
+            } catch(e) { showToast(t.toastFail); }
+            finally { btn.disabled = false; document.querySelector('[data-i18n="btnSubmit"]').innerText = originalText; }
+        };
+
+        window.toggleView = (v) => {
+            const p = document.getElementById('parent-form');
+            const tips = document.getElementById('tips-card');
+            const a = document.getElementById('admin-panel');
+            const t = I18N[curLang];
+            
+            if(v === 'admin') {
+                const pass = prompt(t.alertPass);
+                if(pass !== "admin123") return pass !== null && alert(t.alertWrongPass);
+                p.classList.add('hidden'); 
+                tips.classList.add('hidden');
+                a.classList.remove('hidden');
+            } else {
+                p.classList.remove('hidden'); 
+                tips.classList.remove('hidden');
+                a.classList.add('hidden');
+            }
+        };
+
+        window.downloadCSV = () => {
+            let csv = `\uFEFF${I18N[curLang].thClass},${I18N[curLang].thName},${I18N[curLang].thQty}\n`;
+            data.forEach(i => csv += `${i.class},${i.name},${i.qty}\n`);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = `Sponsorship_List_${new Date().toISOString().split('T')[0]}.csv`; a.click();
+        };
+
+        function showToast(m) {
+            const t = document.getElementById('toast'); t.innerText = m;
+            t.style.opacity = '1'; t.style.top = '7rem';
+            setTimeout(() => { t.style.opacity = '0'; t.style.top = '6rem'; }, 3000);
+        }
+
+        // 初始化
+        updatePageLanguage();
+        render();
+        checkClosingTime();
+        // 每分钟检查一次是否到截止时间
+        setInterval(checkClosingTime, 60000);
+    </script>
+</body>
+</html>
