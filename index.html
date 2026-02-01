@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>新廊华小 - 立春赞助登记</title>
+    <!-- 设置鸡蛋 Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥚</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -31,6 +32,14 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .closed-overlay { pointer-events: none; opacity: 0.5; filter: grayscale(1); }
+
+        /* Modal Styles */
+        .modal-overlay { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
+        .modal-content { animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes modalPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        /* Checkbox Custom Style */
+        .custom-checkbox:checked { background-color: #22c55e; border-color: #22c55e; background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e"); }
     </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -43,7 +52,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
             </div>
         </button>
-        <button onclick="toggleView('admin')" class="lang-switch w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-white text-green-800" title="Admin">
+        <button onclick="openAdminModal()" class="lang-switch w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-white text-green-800" title="Admin">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
@@ -51,6 +60,20 @@
     </div>
 
     <div id="leaf-container"></div>
+
+    <!-- 登录 Modal -->
+    <div id="login-modal" class="fixed inset-0 z-[100] modal-overlay hidden flex items-center justify-center px-4">
+        <div class="modal-content glass-card bg-white w-full max-w-sm rounded-[2rem] p-8 text-center shadow-2xl">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🔐</div>
+            <h3 class="text-xl font-bold text-green-900 mb-2">老师后台登录</h3>
+            <p class="text-xs text-gray-500 mb-6">请输入管理密码以继续</p>
+            <input type="password" id="admin-password" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 mb-4 text-center font-bold tracking-widest" placeholder="••••••">
+            <div class="flex gap-3">
+                <button onclick="closeAdminModal()" class="flex-1 py-3 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-gray-200">取消</button>
+                <button onclick="checkAdminLogin()" class="flex-1 py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 shadow-lg shadow-green-200">进入</button>
+            </div>
+        </div>
+    </div>
 
     <!-- 顶部 -->
     <div class="relative pt-10 pb-2 px-6 text-center overflow-hidden">
@@ -62,7 +85,7 @@
             <span data-i18n="headerTag" class="inline-block px-4 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold tracking-widest mb-3">立春 · 二十四节气</span>
             <h3 data-i18n="mainTitle" class="text-2xl md:text-3xl font-black text-green-800 mb-6 leading-tight serif-font">春风送暖入屠苏</h3>
             
-            <!-- 活动日期 (新增位置) -->
+            <!-- 活动日期 -->
             <div class="mb-6 inline-block bg-white/40 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/50 shadow-sm">
                 <p class="text-green-800 font-bold text-sm flex items-center justify-center gap-2">
                     <span>🗓️</span> <span data-i18n="eventDateInfo">活动：2月4日 (三) 8:00 AM</span>
@@ -174,7 +197,7 @@
                         <button onclick="setQty(60)" class="chip-btn flex-1 bg-white/60 py-2 rounded-xl text-xs font-bold text-green-700 hover:shadow-sm">60</button>
                     </div>
                     
-                    <!-- 提交说明 (新增) -->
+                    <!-- 提交说明 -->
                     <p data-i18n="msgBringEggs" class="text-xs text-green-700/80 leading-relaxed bg-green-50 p-3 rounded-lg border border-green-100 mb-2">
                         请于 3/2（二） 让孩子将鸡蛋带到学校，交给老师统一收集。
                     </p>
@@ -185,7 +208,7 @@
                     <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full hover:animate-[shimmer_1.5s_infinite]"></div>
                 </button>
                 
-                <!-- 截止通告 (默认隐藏) -->
+                <!-- 截止通告 -->
                 <div id="closed-msg" class="hidden text-center bg-red-100 text-red-600 font-bold py-4 rounded-xl">
                     ⚠️ <span data-i18n="msgClosed">登记已截止 / Pendaftaran Ditutup</span>
                 </div>
@@ -214,30 +237,47 @@
             </ul>
         </div>
 
-        <!-- 管理后台 (隐藏) -->
-        <div id="admin-panel" class="hidden glass-card rounded-[2.5rem] p-8 mb-24 animate-in fade-in slide-in-from-bottom-4">
-            <div class="flex justify-between items-center mb-8">
-                <div class="flex items-center gap-3">
-                    <!-- 返回按钮 -->
-                    <button onclick="toggleView('parent')" class="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
-                    <h2 data-i18n="adminTitle" class="text-xl font-black text-green-900 serif-font">管理后台</h2>
+        <!-- 管理后台 (优化版) -->
+        <div id="admin-panel" class="hidden glass-card rounded-[2.5rem] p-6 mb-24 animate-in fade-in slide-in-from-bottom-4">
+            <div class="flex flex-col gap-4 mb-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <button onclick="toggleView('parent')" class="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                        </button>
+                        <h2 data-i18n="adminTitle" class="text-xl font-black text-green-900 serif-font">管理后台</h2>
+                    </div>
+                    <button onclick="downloadCSV()" data-i18n="btnExport" class="text-xs font-bold bg-green-100 text-green-700 px-4 py-2 rounded-xl">导出 CSV</button>
                 </div>
-                <button onclick="downloadCSV()" data-i18n="btnExport" class="text-xs font-bold bg-green-100 text-green-700 px-4 py-2 rounded-xl">导出 CSV</button>
+                
+                <!-- 班级过滤器 -->
+                <div class="w-full">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1 block">筛选班级 (Filter)</label>
+                    <select id="adminClassFilter" onchange="renderAdminList()" class="w-full px-4 py-2 rounded-xl bg-gray-50 border border-gray-200 text-sm font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-green-500">
+                        <option value="ALL">显示所有 (All Classes)</option>
+                        <option value="3A">3A</option><option value="3B">3B</option><option value="3C">3C</option><option value="3D">3D</option><option value="3E">3E</option>
+                        <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option><option value="4D">4D</option>
+                        <option value="5A">5A</option><option value="5B">5B</option><option value="5C">5C</option><option value="5D">5D</option><option value="5E">5E</option>
+                        <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option>
+                    </select>
+                </div>
             </div>
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
                         <tr class="text-green-800/40 font-black uppercase text-[10px] tracking-widest">
-                            <th data-i18n="thClass" class="pb-4">班级</th>
-                            <th data-i18n="thName" class="pb-4">姓名</th>
-                            <th data-i18n="thQty" class="pb-4 text-center">数量</th>
+                            <th class="pb-4 w-12">班级</th>
+                            <th class="pb-4">姓名</th>
+                            <th class="pb-4 w-16 text-center">数量</th>
+                            <th class="pb-4 w-10 text-center">收</th>
                         </tr>
                     </thead>
-                    <tbody id="adminList" class="divide-y divide-green-50"></tbody>
+                    <tbody id="adminList" class="divide-y divide-green-50">
+                        <!-- 动态生成 -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -249,7 +289,7 @@
     <script>
         // *** 重要配置 ***
         // 请替换为您的 Google Apps Script Web App URL
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_YOUR_SCRIPT_ID_HERE/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfR4c986lHyvGFL3m89KPV1pbwI9MREUA5ZgQKyXT4WEK9Xm_8cfYGG2_Zszq6-_FrVw/exec";
         
         // 自动关闭配置 (2026年2月2日 21:00)
         const CLOSING_TIME = new Date("2026-02-02T21:00:00").getTime();
@@ -259,6 +299,8 @@
         let curLang = 'zh';
         let data = [];
         let isLoading = false;
+        // 本地存储 Checkbox 状态 Key Prefix
+        const CHECK_KEY = "egg_checked_";
 
         const I18N = {
             zh: {
@@ -273,7 +315,6 @@
                 thClass: "班级", thName: "姓名", thQty: "数量", thAction: "操作", btnRemove: "移除",
                 navRegister: "立春登记", navAdmin: "老师管理", toastIncomplete: "请完整填写赞助资料 🌱",
                 toastSubmitting: "提交中...", toastSuccess: "提交成功！感谢您支持文化传承 ✨", toastFail: "提交失败，请稍后重试",
-                alertPass: "请输入管理密码：", alertWrongPass: "密码错误", confirmRemove: "Google 表格版不支持直接删除，请在表格中操作",
                 tipsTitle: "防破损小贴士", tip1: "建议使用原装蛋托，并用胶带封口。",
                 tip2: "如果数量较少，可用旧报纸包裹放入塑料盒。", tip3: "在包装外写上学生姓名和班级，方便老师对账。",
                 msgClosed: "登记已截止",
@@ -291,7 +332,6 @@
                 thClass: "Kelas", thName: "Nama", thQty: "Bil.", thAction: "Tindakan", btnRemove: "Hapus",
                 navRegister: "Daftar", navAdmin: "Admin Guru", toastIncomplete: "Sila isi maklumat lengkap 🌱",
                 toastSubmitting: "Sedang hantar...", toastSuccess: "Berjaya! Terima kasih atas sokongan ✨", toastFail: "Gagal, sila cuba lagi nanti",
-                alertPass: "Masukkan kata laluan admin:", alertWrongPass: "Kata laluan salah", confirmRemove: "Versi ini tidak sokong padam, sila edit di Google Sheet",
                 tipsTitle: "Tips Pembungkusan", tip1: "Gunakan sarang telur asal dan lekatkan dengan pita pelekat.",
                 tip2: "Jika kuantiti sedikit, balut dengan surat khabar dan letak dalam bekas plastik.",
                 tip3: "Tulis nama murid dan kelas pada bungkusan untuk memudahkan semakan guru.",
@@ -316,20 +356,14 @@
         }
         createLeaves();
 
-        // 检查截止时间
         function checkClosingTime() {
             const now = new Date().getTime();
             if (now > CLOSING_TIME) {
-                // 锁定输入区域
                 const inputArea = document.getElementById('input-area');
                 const btn = document.getElementById('submitBtn');
                 const msg = document.getElementById('closed-msg');
-                
-                // 将输入区域变灰且不可点击
                 inputArea.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
                 inputArea.classList.add('closed-overlay');
-                
-                // 隐藏提交按钮，显示截止信息
                 btn.style.display = 'none';
                 msg.classList.remove('hidden');
             }
@@ -359,13 +393,15 @@
                     console.log("Demo Mode");
                     data = [
                         {class: "3A", name: "演示数据 (Demo)", qty: 30},
-                        {class: "6B", name: "张同学", qty: 10}
+                        {class: "6B", name: "张同学", qty: 10},
+                        {class: "3A", name: "王小明", qty: 5}
                     ];
                 } else {
                     const res = await fetch(SCRIPT_URL);
                     data = await res.json();
                 }
                 render();
+                renderAdminList(); // Also update admin if open
             } catch (e) { console.error(e); } finally { isLoading = false; render(); }
         }
         fetchData();
@@ -414,16 +450,56 @@
             } else {
                 status.innerText = t.statusDone;
             }
-
-            const sorted = [...data].sort((a,b) => a.class.localeCompare(b.class));
-            document.getElementById('adminList').innerHTML = sorted.map(i => `
-                <tr class="group">
-                    <td class="py-4 font-bold text-green-900">${i.class}</td>
-                    <td class="py-4 text-green-700">${i.name}</td>
-                    <td class="py-4 text-center font-black text-green-600">${i.qty}</td>
-                </tr>
-            `).join('');
         }
+
+        function renderAdminList() {
+            const filterClass = document.getElementById('adminClassFilter').value;
+            let sorted = [...data].sort((a,b) => a.class.localeCompare(b.class) || a.name.localeCompare(b.name));
+            
+            if (filterClass !== "ALL") {
+                sorted = sorted.filter(item => item.class === filterClass);
+            }
+
+            const tbody = document.getElementById('adminList');
+            tbody.innerHTML = sorted.map((item, index) => {
+                // Generate a pseudo-key for localStorage based on name+class
+                const key = `${CHECK_KEY}${item.class}_${item.name}`;
+                const isChecked = localStorage.getItem(key) === "true";
+                
+                return `
+                <tr class="group hover:bg-green-50/50 transition-colors ${isChecked ? 'opacity-50 grayscale' : ''}">
+                    <td class="py-3 font-bold text-green-900">${item.class}</td>
+                    <td class="py-3 text-green-700 text-xs md:text-sm font-medium">${item.name}</td>
+                    <td class="py-3 text-center">
+                        <input type="number" 
+                               value="${item.qty}" 
+                               onchange="updateLocalQty('${item.name}', '${item.class}', this.value)"
+                               class="w-12 text-center bg-transparent border-b border-green-200 focus:border-green-600 focus:outline-none font-bold text-green-600">
+                    </td>
+                    <td class="py-3 text-center">
+                        <input type="checkbox" 
+                               class="custom-checkbox w-5 h-5 rounded border-2 border-green-300 appearance-none cursor-pointer transition-all"
+                               ${isChecked ? 'checked' : ''}
+                               onchange="toggleReceived('${key}')">
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        window.toggleReceived = (key) => {
+            const current = localStorage.getItem(key) === "true";
+            localStorage.setItem(key, !current);
+            renderAdminList(); // Re-render to apply opacity style
+        };
+
+        window.updateLocalQty = (name, cls, newQty) => {
+            // Find item in local data array and update it (Client-side only visual update)
+            const item = data.find(d => d.name === name && d.class === cls);
+            if (item) {
+                item.qty = parseInt(newQty);
+                render(); // Update progress bar
+            }
+        };
 
         window.handleSponsorship = async () => {
             const t = I18N[curLang];
@@ -454,18 +530,31 @@
             finally { btn.disabled = false; document.querySelector('[data-i18n="btnSubmit"]').innerText = originalText; }
         };
 
+        // Modal Logic
+        window.openAdminModal = () => document.getElementById('login-modal').classList.remove('hidden');
+        window.closeAdminModal = () => document.getElementById('login-modal').classList.add('hidden');
+        
+        window.checkAdminLogin = () => {
+            const pass = document.getElementById('admin-password').value;
+            if(pass === "admin123") {
+                closeAdminModal();
+                toggleView('admin');
+                document.getElementById('admin-password').value = ""; // clear pass
+            } else {
+                alert("密码错误 / Salah Kata Laluan");
+            }
+        };
+
         window.toggleView = (v) => {
             const p = document.getElementById('parent-form');
             const tips = document.getElementById('tips-card');
             const a = document.getElementById('admin-panel');
-            const t = I18N[curLang];
             
             if(v === 'admin') {
-                const pass = prompt(t.alertPass);
-                if(pass !== "admin123") return pass !== null && alert(t.alertWrongPass);
                 p.classList.add('hidden'); 
                 tips.classList.add('hidden');
                 a.classList.remove('hidden');
+                renderAdminList(); // Render list when opening admin
             } else {
                 p.classList.remove('hidden'); 
                 tips.classList.remove('hidden');
@@ -488,11 +577,9 @@
             setTimeout(() => { t.style.opacity = '0'; t.style.top = '6rem'; }, 3000);
         }
 
-        // 初始化
         updatePageLanguage();
         render();
         checkClosingTime();
-        // 每分钟检查一次是否到截止时间
         setInterval(checkClosingTime, 60000);
     </script>
 </body>
