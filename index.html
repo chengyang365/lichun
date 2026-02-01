@@ -189,10 +189,8 @@
     <div class="relative w-full flex flex-col items-center justify-center z-20 mb-8 px-6">
         <div class="w-40 h-40 relative mb-4">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-xl">
-                <!-- 光晕换成暖色 -->
                 <circle cx="100" cy="100" r="70" fill="#fecdd3" opacity="0.3" /> <!-- Rose 200 -->
                 <circle cx="100" cy="100" r="55" fill="#fda4af" opacity="0.2" /> <!-- Rose 300 -->
-                <!-- 地面换成微红 -->
                 <path d="M40,160 Q100,170 160,160" stroke="#f43f5e" stroke-width="3" fill="none" opacity="0.3"/>
                 <path d="M70,160 L75,150 M120,160 L125,152 M90,163 L90,155" stroke="#fb7185" stroke-width="2" stroke-linecap="round"/>
                 <ellipse cx="100" cy="158" rx="20" ry="4" fill="#881337" opacity="0.1" />
@@ -225,7 +223,6 @@
                 </div>
             </div>
             <div class="relative w-full h-4 bg-red-50 rounded-full overflow-hidden mb-4 border border-red-100/50">
-                <!-- 进度条颜色改为金色到红色渐变 -->
                 <div id="progressBar" class="progress-bar-glow h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 transition-all duration-1000 ease-out" style="width: 0%"></div>
             </div>
             <p id="progressStatus" class="text-center text-xs font-medium text-red-700/60 italic tracking-wide">
@@ -270,7 +267,6 @@
                         <button onclick="setQty(60)" class="chip-btn flex-1 bg-red-50 py-2 rounded-xl text-xs font-bold text-red-700 hover:shadow-sm">60</button>
                     </div>
                     
-                    <!-- 提交说明 -->
                     <p data-i18n="msgBringEggs" class="text-xs text-red-800/70 leading-relaxed bg-red-50 p-3 rounded-lg border border-red-100 mb-2">
                         请于 3/2（二） 让孩子将鸡蛋带到学校，交给老师统一收集。
                     </p>
@@ -278,11 +274,9 @@
 
                 <button onclick="handleSponsorship()" id="submitBtn" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-red-200 active:scale-95 transition-all mt-6 text-lg tracking-widest overflow-hidden relative group">
                     <span data-i18n="btnSubmit" class="relative z-10 group-hover:tracking-[0.2em] transition-all">递交这份心意</span>
-                    <!-- 按钮光效 -->
                     <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 -translate-x-full hover:animate-[shimmer_1.5s_infinite]"></div>
                 </button>
                 
-                <!-- 截止通告 -->
                 <div id="closed-msg" class="hidden text-center bg-gray-100 text-gray-500 font-bold py-4 rounded-xl border border-gray-200">
                     🔒 <span data-i18n="msgClosed">登记已截止 / Pendaftaran Ditutup</span>
                 </div>
@@ -311,7 +305,7 @@
             </ul>
         </div>
 
-        <!-- 管理后台 -->
+        <!-- 管理后台 (新春版) -->
         <div id="admin-panel" class="hidden glass-card rounded-[2.5rem] p-6 mb-24 animate-in fade-in slide-in-from-bottom-4">
             <div class="flex flex-col gap-4 mb-6">
                 <div class="flex justify-between items-center">
@@ -335,6 +329,18 @@
                         <option value="5A">5A</option><option value="5B">5B</option><option value="5C">5C</option><option value="5D">5D</option><option value="5E">5E</option>
                         <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option>
                     </select>
+                </div>
+
+                <!-- 统计卡片 (新增) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-red-50 p-3 rounded-2xl text-center border border-red-100">
+                        <p class="text-[10px] text-red-400 font-bold uppercase mb-1">登记总数</p>
+                        <p class="text-2xl font-black text-red-800 leading-none" id="adminTotalPledged">0</p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded-2xl text-center border border-green-100">
+                        <p class="text-[10px] text-green-500 font-bold uppercase mb-1">实收 (已✔)</p>
+                        <p class="text-2xl font-black text-green-700 leading-none" id="adminTotalReceived">0</p>
+                    </div>
                 </div>
             </div>
 
@@ -542,17 +548,25 @@
                 sorted = sorted.filter(item => item.class === filterClass);
             }
 
+            let totalPledged = 0;
+            let totalReceived = 0;
+
             const tbody = document.getElementById('adminList');
             tbody.innerHTML = sorted.map((item, index) => {
                 const key = `${CHECK_KEY}${item.class}_${item.name}`;
                 const isChecked = localStorage.getItem(key) === "true";
+                const qty = parseInt(item.qty) || 0;
+                
+                totalPledged += qty;
+                if (isChecked) totalReceived += qty;
+
                 return `
                 <tr class="group hover:bg-red-50/50 transition-colors ${isChecked ? 'opacity-50 grayscale' : ''}">
                     <td class="py-3 font-bold text-red-900">${item.class}</td>
                     <td class="py-3 text-red-800 text-xs md:text-sm font-medium">${item.name}</td>
                     <td class="py-3 text-center">
                         <input type="number" 
-                               value="${item.qty}" 
+                               value="${qty}" 
                                onchange="updateLocalQty('${item.name}', '${item.class}', this.value)"
                                class="w-12 text-center bg-transparent border-b border-red-200 focus:border-red-600 focus:outline-none font-bold text-red-600">
                     </td>
@@ -564,6 +578,12 @@
                     </td>
                 </tr>
             `}).join('');
+
+            // 更新统计数据
+            if(document.getElementById('adminTotalPledged')) {
+                document.getElementById('adminTotalPledged').innerText = totalPledged;
+                document.getElementById('adminTotalReceived').innerText = totalReceived;
+            }
         }
 
         window.toggleReceived = (key) => {
@@ -577,6 +597,7 @@
             if (item) {
                 item.qty = parseInt(newQty);
                 render();
+                renderAdminList(); // 重新渲染以更新总数
             }
         };
 
