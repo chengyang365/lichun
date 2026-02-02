@@ -13,27 +13,26 @@
         
         /* 新春配色变量 */
         :root { 
-            --cny-red: #be123c; /* Rose 700 */
-            --cny-gold: #d97706; /* Amber 600 */
-            --cny-bg-start: #fff1f2; /* Rose 50 */
-            --cny-bg-end: #fff7ed; /* Orange 50 */
+            --cny-red: #be123c; 
+            --cny-gold: #d97706;
+            --cny-bg-start: #fff1f2; 
+            --cny-bg-end: #fff7ed; 
         }
 
         body { 
             font-family: 'Noto Sans SC', 'Nunito', sans-serif; 
             background: linear-gradient(135deg, var(--cny-bg-start) 0%, var(--cny-bg-end) 100%); 
-            color: #881337; /* Rose 900 */
+            color: #881337; 
             overflow-x: hidden; 
             -webkit-tap-highlight-color: transparent; 
         }
 
         .serif-font { font-family: 'Noto Serif SC', serif; }
 
-        /* 磨砂玻璃卡片 - 加强金色质感 */
         .glass-card { 
             background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(20px); 
-            border: 1px solid rgba(251, 191, 36, 0.3); /* 金色边框 */
+            border: 1px solid rgba(251, 191, 36, 0.3); 
             box-shadow: 0 10px 40px rgba(190, 18, 60, 0.1); 
             transition: all 0.3s ease; 
         }
@@ -45,40 +44,30 @@
             box-shadow: 0 4px 6px rgba(190, 18, 60, 0.05); 
         }
 
-        /* 樱花飘落动画 */
         .blossom { 
-            position: absolute; 
-            pointer-events: none; 
-            z-index: 0; 
-            animation: fall 12s linear infinite; 
-            opacity: 0.6; 
+            position: absolute; pointer-events: none; z-index: 0; 
+            animation: fall 12s linear infinite; opacity: 0.6; 
         }
         @keyframes fall { 
             0% { transform: translate(0, -10%) rotate(0deg); opacity: 0; } 
-            10% { opacity: 0.8; } 
-            90% { opacity: 0.8; } 
+            10% { opacity: 0.8; } 90% { opacity: 0.8; } 
             100% { transform: translate(50vw, 110vh) rotate(360deg); opacity: 0; } 
         }
 
-        /* 进度条流光特效 - 金色 */
         .progress-bar-glow { 
             box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); 
-            background-size: 200% 100%; 
-            animation: shimmer 2s linear infinite; 
+            background-size: 200% 100%; animation: shimmer 2s linear infinite; 
         }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         .lang-switch { 
-            background: rgba(255, 255, 255, 0.9); 
-            border: 1px solid rgba(190, 18, 60, 0.2); 
-            backdrop-filter: blur(4px); 
-            color: #be123c;
+            background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(190, 18, 60, 0.2); 
+            backdrop-filter: blur(4px); color: #be123c;
         }
 
         .wobble-egg { animation: wobble 4s ease-in-out infinite; transform-origin: bottom center; }
         @keyframes wobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
 
-        /* 快捷按钮 - 金色边框 */
         .chip-btn { transition: all 0.2s; border: 1px solid #fed7aa; color: #9a3412; background: #fff7ed; }
         .chip-btn:active { transform: scale(0.95); }
         .chip-btn:hover { border-color: #f97316; background-color: #ffedd5; }
@@ -95,13 +84,27 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .closed-overlay { pointer-events: none; opacity: 0.5; filter: grayscale(1); }
-
-        /* Modal Styles */
         .modal-overlay { background: rgba(88, 28, 135, 0.3); backdrop-filter: blur(4px); }
         .modal-content { animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
         .custom-checkbox:checked { background-color: #be123c; border-color: #be123c; background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e"); }
+
+        /* 滚动列表样式 */
+        .scrolling-container {
+            height: 160px; /* 显示高度 */
+            overflow: hidden;
+            position: relative;
+        }
+        .scrolling-content {
+            animation: scrollUp 40s linear infinite; /* 滚动速度 */
+        }
+        .scrolling-container:hover .scrolling-content {
+            animation-play-state: paused;
+        }
+        @keyframes scrollUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); } 
+        }
     </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -121,7 +124,6 @@
         </button>
     </div>
 
-    <!-- 樱花飘落背景 -->
     <div id="leaf-container"></div>
 
     <!-- 登录 Modal -->
@@ -146,7 +148,6 @@
                 <h2 class="text-sm md:text-base font-bold text-red-700 tracking-[0.15em] font-sans">SJK (C) LADANG GRISEK</h2>
             </div>
             
-            <!-- 新春标签 -->
             <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-red-100 border border-red-200 mb-3">
                 <span class="text-red-500 text-xs">🌸</span>
                 <span data-i18n="headerTag" class="text-red-700 text-xs font-bold tracking-widest">立春 · 二十四节气</span>
@@ -155,14 +156,13 @@
             
             <h3 data-i18n="mainTitle" class="text-3xl md:text-4xl font-black text-red-800 mb-6 leading-tight serif-font drop-shadow-sm">春风送暖入屠苏</h3>
             
-            <!-- 活动日期 - 红色风格 -->
             <div class="mb-8 inline-block bg-white/60 px-5 py-2 rounded-2xl backdrop-blur-md border border-red-200 shadow-sm">
                 <p class="text-red-800 font-bold text-sm flex items-center justify-center gap-2">
                     <span class="animate-pulse">🏮</span> <span data-i18n="eventDateInfo">活动：2月4日 (三) 8:00 AM</span>
                 </p>
             </div>
 
-            <!-- 倒计时 - 金色/红色 -->
+            <!-- 倒计时 -->
             <div class="flex flex-col items-center mb-8">
                 <p data-i18n="countdownLabel" class="text-xs font-bold text-red-500/80 mb-3 uppercase tracking-widest">距离立春活动还有</p>
                 <div class="flex gap-2 text-red-800">
@@ -189,8 +189,8 @@
     <div class="relative w-full flex flex-col items-center justify-center z-20 mb-8 px-6">
         <div class="w-40 h-40 relative mb-4">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-xl">
-                <circle cx="100" cy="100" r="70" fill="#fecdd3" opacity="0.3" /> <!-- Rose 200 -->
-                <circle cx="100" cy="100" r="55" fill="#fda4af" opacity="0.2" /> <!-- Rose 300 -->
+                <circle cx="100" cy="100" r="70" fill="#fecdd3" opacity="0.3" />
+                <circle cx="100" cy="100" r="55" fill="#fda4af" opacity="0.2" />
                 <path d="M40,160 Q100,170 160,160" stroke="#f43f5e" stroke-width="3" fill="none" opacity="0.3"/>
                 <path d="M70,160 L75,150 M120,160 L125,152 M90,163 L90,155" stroke="#fb7185" stroke-width="2" stroke-linecap="round"/>
                 <ellipse cx="100" cy="158" rx="20" ry="4" fill="#881337" opacity="0.1" />
@@ -230,6 +230,21 @@
             </p>
         </div>
 
+        <!-- 🧧 实时滚动鸣谢榜 -->
+        <div class="glass-card rounded-[2rem] p-5 mb-8 border border-red-200/50 bg-white/70">
+            <h3 class="font-black text-red-900 mb-3 flex items-center text-sm uppercase tracking-wider">
+                <span class="bg-red-100 p-1.5 rounded-lg mr-2 shadow-sm">📜</span>
+                <span data-i18n="honorTitle">爱心鸣谢榜</span>
+            </h3>
+            <div class="scrolling-container">
+                <div class="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-white/90 to-transparent z-10 pointer-events-none"></div>
+                <div id="honorList" class="scrolling-content space-y-2.5">
+                    <div class="text-center text-xs text-red-300 py-4">等待数据加载...</div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/90 to-transparent z-10 pointer-events-none"></div>
+            </div>
+        </div>
+
         <!-- 登记表单 -->
         <div id="parent-form" class="glass-card rounded-[2.5rem] p-8 mb-8">
             <h2 class="text-xl font-black text-red-900 mb-8 flex items-center serif-font">
@@ -250,7 +265,7 @@
                             <option value="3A">3A</option><option value="3B">3B</option><option value="3C">3C</option><option value="3D">3D</option><option value="3E">3E</option>
                             <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option><option value="4D">4D</option>
                             <option value="5A">5A</option><option value="5B">5B</option><option value="5C">5C</option><option value="5D">5D</option><option value="5E">5E</option>
-                            <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option><option value="PPKI">PPKI</option>
+                            <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option>
                         </select>
                     </div>
                 </div>
@@ -305,7 +320,7 @@
             </ul>
         </div>
 
-        <!-- 管理后台 (新春版) -->
+        <!-- 管理后台 -->
         <div id="admin-panel" class="hidden glass-card rounded-[2.5rem] p-6 mb-24 animate-in fade-in slide-in-from-bottom-4">
             <div class="flex flex-col gap-4 mb-6">
                 <div class="flex justify-between items-center">
@@ -327,11 +342,10 @@
                         <option value="3A">3A</option><option value="3B">3B</option><option value="3C">3C</option><option value="3D">3D</option><option value="3E">3E</option>
                         <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option><option value="4D">4D</option>
                         <option value="5A">5A</option><option value="5B">5B</option><option value="5C">5C</option><option value="5D">5D</option><option value="5E">5E</option>
-                        <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option><option value="PPKI">PPKI</option>
+                        <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option>
                     </select>
                 </div>
 
-                <!-- 统计卡片 (新增) -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-red-50 p-3 rounded-2xl text-center border border-red-100">
                         <p class="text-[10px] text-red-400 font-bold uppercase mb-1">登记总数</p>
@@ -368,7 +382,7 @@
     <script>
         // *** 重要配置 ***
         // 请替换为您的 Google Apps Script Web App URL
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfR4c986lHyvGFL3m89KPV1pbwI9MREUA5ZgQKyXT4WEK9Xm_8cfYGG2_Zszq6-_FrVw/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_YOUR_SCRIPT_ID_HERE/exec";
         
         // 自动关闭配置 (2026年2月2日 21:00)
         const CLOSING_TIME = new Date("2026-02-02T21:00:00").getTime();
@@ -376,9 +390,9 @@
         const TARGET = 600;
         
         let curLang = 'zh';
-        let data = [];
+        let rawData = [];
+        let aggregatedData = [];
         let isLoading = false;
-        // 本地存储 Checkbox 状态 Key Prefix
         const CHECK_KEY = "egg_checked_";
 
         const I18N = {
@@ -398,7 +412,8 @@
                 tipsTitle: "防破损小贴士", tip1: "建议使用原装蛋托，并用胶带封口。",
                 tip2: "如果数量较少，可用旧报纸包裹放入塑料盒。", tip3: "在包装外写上学生姓名和班级，方便老师对账。",
                 msgClosed: "登记已截止",
-                msgBringEggs: "请于 3/2（二） 让孩子将鸡蛋带到学校，交给老师统一收集。"
+                msgBringEggs: "请于 3/2（二） 让孩子将鸡蛋带到学校，交给老师统一收集。",
+                honorTitle: "爱心鸣谢榜"
             },
             bm: {
                 headerTag: "Li Chun · 24 Musim Suria", mainTitle: "Kehangatan Musim Bunga", countdownLabel: "MASA KE ACARA LI CHUN",
@@ -417,7 +432,8 @@
                 tip2: "Jika kuantiti sedikit, balut dengan surat khabar dan letak dalam bekas plastik.",
                 tip3: "Tulis nama murid dan kelas pada bungkusan untuk memudahkan semakan guru.",
                 msgClosed: "Pendaftaran Ditutup",
-                msgBringEggs: "Sila bawa telur ke sekolah pada 3/2 (Selasa) dan serahkan kepada guru."
+                msgBringEggs: "Sila bawa telur ke sekolah pada 3/2 (Selasa) dan serahkan kepada guru.",
+                honorTitle: "Senarai Penghargaan"
             }
         };
 
@@ -469,30 +485,56 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
+        // 核心函数：数据聚合
+        function aggregateData(rawData) {
+            const map = new Map();
+            // 保持原始数据的顺序（假设原始数据是按时间排序的），但如果是追加，我们希望最新的排在前面
+            // rawData 默认是旧 -> 新 (appendRow)
+            // 我们希望聚合后的列表，如果是同一个人，位置取决于最后一次更新
+            
+            rawData.forEach(item => {
+                const key = `${item.class}_${item.name}`;
+                const qty = parseInt(item.qty) || 0;
+                
+                if (map.has(key)) {
+                    // 如果已存在，累加数量，并更新引用到最新（Map set 会更新 value 但不改变 insertion order，除非 delete 再 set）
+                    const existing = map.get(key);
+                    existing.qty += qty;
+                    // 为了让其在 Map 迭代中排到最后（代表最新），我们重新插入
+                    map.delete(key);
+                    map.set(key, existing);
+                } else {
+                    map.set(key, { ...item, qty: qty }); // Clone item to avoid mutation
+                }
+            });
+            return Array.from(map.values());
+        }
+
         async function fetchData() {
             isLoading = true;
             try {
                 if(SCRIPT_URL.includes("YOUR_SCRIPT_ID")) {
                     console.log("Demo Mode");
-                    // 演示模式：如果没有配置真实URL，这里的数据只是临时的，刷新就没了
-                    data = [
+                    rawData = [
                         {class: "3A", name: "演示数据 (Demo)", qty: 30},
                         {class: "6B", name: "张同学", qty: 10},
-                        {class: "3A", name: "王小明", qty: 5}
+                        {class: "3A", name: "王小明", qty: 5},
+                        {class: "4B", name: "李华", qty: 15},
+                        {class: "3A", name: "王小明", qty: 10} // 模拟重复提交
                     ];
                 } else {
-                    // *** 关键优化：添加时间戳参数 (?t=...) ***
-                    // 这会强制浏览器认为这是一个新的请求，而不是读取缓存的旧数据
                     const res = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
-                    data = await res.json();
+                    rawData = await res.json();
                 }
+                
+                // 执行聚合
+                aggregatedData = aggregateData(rawData);
+                
                 render();
                 renderAdminList();
             } catch (e) { console.error(e); } finally { isLoading = false; render(); }
         }
-        // 页面加载时立即获取一次
         fetchData();
-        // 之后每 10 秒自动更新一次
         setInterval(fetchData, 10000);
 
         function toggleLanguage() {
@@ -521,7 +563,9 @@
 
         function render() {
             const t = I18N[curLang];
-            const total = data.reduce((s, i) => s + (parseInt(i.qty) || 0), 0);
+            // 总数计算使用 rawData 还是 aggregatedData 结果是一样的，只要聚合逻辑正确
+            // 使用 aggregatedData 计算总数更稳妥
+            const total = aggregatedData.reduce((s, i) => s + (parseInt(i.qty) || 0), 0);
             const perc = Math.min(Math.floor((total/TARGET)*100), 100);
             
             document.getElementById('currentCount').innerText = total;
@@ -538,11 +582,33 @@
             } else {
                 status.innerText = t.statusDone;
             }
+
+            // Render Honor Roll: Use Aggregated Data, Reversed (Newest First)
+            const listData = [...aggregatedData].reverse().slice(0, 50);
+            const honorContainer = document.getElementById('honorList');
+            if (listData.length === 0) {
+                honorContainer.innerHTML = '<div class="text-center text-xs text-red-300 py-4">...</div>';
+            } else {
+                const itemsHtml = listData.map(item => `
+                    <div class="flex justify-between items-center bg-red-50/60 p-2.5 rounded-xl border border-red-100 shadow-sm backdrop-blur-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-red-200 text-red-800 text-[10px] font-bold px-1.5 rounded">${item.class}</span>
+                            <span class="text-xs font-bold text-red-900">${item.name}</span>
+                        </div>
+                        <div class="text-xs font-black text-amber-600 flex items-center gap-1">
+                            <span>${item.qty}</span> <span>🥚</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                honorContainer.innerHTML = itemsHtml + (listData.length > 4 ? itemsHtml : ''); 
+            }
         }
 
         function renderAdminList() {
             const filterClass = document.getElementById('adminClassFilter').value;
-            let sorted = [...data].sort((a,b) => a.class.localeCompare(b.class) || a.name.localeCompare(b.name));
+            // 使用 Aggregated Data 进行管理列表渲染
+            let sorted = [...aggregatedData].sort((a,b) => a.class.localeCompare(b.class) || a.name.localeCompare(b.name));
             
             if (filterClass !== "ALL") {
                 sorted = sorted.filter(item => item.class === filterClass);
@@ -565,10 +631,7 @@
                     <td class="py-3 font-bold text-red-900">${item.class}</td>
                     <td class="py-3 text-red-800 text-xs md:text-sm font-medium">${item.name}</td>
                     <td class="py-3 text-center">
-                        <input type="number" 
-                               value="${qty}" 
-                               onchange="updateLocalQty('${item.name}', '${item.class}', this.value)"
-                               class="w-12 text-center bg-transparent border-b border-red-200 focus:border-red-600 focus:outline-none font-bold text-red-600">
+                        <span class="font-bold text-red-600">${qty}</span>
                     </td>
                     <td class="py-3 text-center">
                         <input type="checkbox" 
@@ -592,14 +655,8 @@
             renderAdminList(); 
         };
 
-        window.updateLocalQty = (name, cls, newQty) => {
-            const item = data.find(d => d.name === name && d.class === cls);
-            if (item) {
-                item.qty = parseInt(newQty);
-                render();
-                renderAdminList(); // 重新渲染以更新总数
-            }
-        };
+        // 移除客户端修改数量功能，因为使用了聚合数据，修改本地聚合数据比较复杂且无法同步回 Google Sheet
+        // 老师若要修改数量，建议在 Google Sheet 中操作
 
         window.handleSponsorship = async () => {
             const t = I18N[curLang];
@@ -621,8 +678,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: name, class: cls, qty: qty })
                 });
-                data.push({ name: name, class: cls, qty: qty });
-                render(); fireConfetti();
+                // Optimistic UI Update (Push raw, then aggregation will handle it on next cycle or manual trigger)
+                rawData.push({ name: name, class: cls, qty: qty });
+                aggregatedData = aggregateData(rawData); // Re-aggregate immediately
+                render(); 
+                fireConfetti();
                 document.getElementById('studentName').value = "";
                 document.getElementById('eggCount').value = "";
                 showToast(t.toastSuccess);
@@ -662,7 +722,8 @@
 
         window.downloadCSV = () => {
             let csv = `\uFEFF${I18N[curLang].thClass},${I18N[curLang].thName},${I18N[curLang].thQty}\n`;
-            data.forEach(i => csv += `${i.class},${i.name},${i.qty}\n`);
+            // 导出也是导出的合并后数据
+            aggregatedData.forEach(i => csv += `${i.class},${i.name},${i.qty}\n`);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
