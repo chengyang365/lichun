@@ -113,7 +113,7 @@
     <div class="fixed top-4 right-4 z-50 flex gap-2">
         <button onclick="toggleLanguage()" class="lang-switch px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transition-transform active:scale-95 hover:bg-white h-10 ring-1 ring-red-100">
             <span class="text-xs font-bold" id="langLabel">CN / BM</span>
-            <div class="w-4 h-4 rounded-full bg-red- flex items-center justify-center text-[8px] text-white font-bold">
+            <div class="w-4 h-4 rounded-full bg-red-600 flex items-center justify-center text-[8px] text-white font-bold">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
             </div>
         </button>
@@ -215,7 +215,7 @@
                     <p data-i18n="statsLabel" class="text-[10px] font-bold text-red-800/50 uppercase tracking-[0.2em]">已汇聚心意</p>
                     <div class="flex items-baseline">
                         <span id="currentCount" class="text-5xl font-black text-red-700 tracking-tighter">0</span>
-                        <span data-i18n="statsUnit" class="text-red-800/40 font-bold ml-2 text-sm">/ 688 颗</span>
+                        <span data-i18n="statsUnit" class="text-red-800/40 font-bold ml-2 text-sm">/ 600 颗</span>
                     </div>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-red-50 to-white rounded-2xl flex items-center justify-center shadow-inner border border-red-50">
@@ -387,13 +387,14 @@
         // 自动关闭配置 (2026年2月2日 21:00)
         const CLOSING_TIME = new Date("2026-02-02T21:00:00").getTime();
         const EVENT_DATE = new Date("2026-02-04T08:00:00").getTime();
-        const TARGET = 688;
+        const TARGET = 600;
         
         let curLang = 'zh';
         let rawData = [];
         let aggregatedData = [];
         let isLoading = false;
         const CHECK_KEY = "egg_checked_";
+        const OVERRIDE_KEY = "egg_qty_override_";
 
         const I18N = {
             zh: {
@@ -401,7 +402,7 @@
                 eventDateInfo: "活动：2月4日 (三) 8:00 AM",
                 labelDay: "天", labelHour: "时", labelMin: "分", meaningTitle: "🌟 立蛋寓意",
                 meaningText: "象征接收天地阳气，预示全年好运、学业进步、平安吉祥。", statsLabel: "已汇聚心意",
-                statsUnit: "/ 688 颗", statusEmpty: "新春伊始，静候佳音...", statusProg: "春意正浓，还差 {diff} 颗目标达成！",
+                statsUnit: "/ 600 颗", statusEmpty: "新春伊始，静候佳音...", statusProg: "春意正浓，还差 {diff} 颗目标达成！",
                 statusDone: "🎉 万象更新！目标已达成，感恩支持！", formTitle: "赞助登记", labelName: "学生姓名",
                 phName: "姓名", labelClass: "所属班级", phClass: "请选择班级", labelQty: "赞助数量 (颗)",
                 phEggCount: "5 / 10 / 30 / 60", btnSubmit: "递交这份心意", adminTitle: "管理后台", btnExport: "导出 CSV",
@@ -420,7 +421,7 @@
                 eventDateInfo: "Acara: 4 Feb (Rabu) 8:00 Pagi",
                 labelDay: "Hari", labelHour: "Jam", labelMin: "Minit", meaningTitle: "🌟 Simbolik",
                 meaningText: "Melambangkan keseimbangan tenaga alam, membawa tuah, kejayaan akademik, dan keharmonian.", statsLabel: "Sumbangan Terkumpul",
-                statsUnit: "/ 688 Biji", statusEmpty: "Tahun baru bermula, menanti sumbangan...", statusProg: "Semangat membara, kurang {diff} biji lagi!",
+                statsUnit: "/ 600 Biji", statusEmpty: "Tahun baru bermula, menanti sumbangan...", statusProg: "Semangat membara, kurang {diff} biji lagi!",
                 statusDone: "🎉 Tahniah! Sasaran tercapai dengan jayanya!", formTitle: "Pendaftaran Penajaan", labelName: "Nama Murid",
                 phName: "Nama Penuh", labelClass: "Kelas", phClass: "Pilih Kelas", labelQty: "Bilangan Tajaan (Biji)",
                 phEggCount: "5 / 10 / 30 / 60", btnSubmit: "Hantar Sumbangan", adminTitle: "Panel Admin", btnExport: "Eksport CSV",
@@ -490,24 +491,68 @@
             const map = new Map();
             // 保持原始数据的顺序（假设原始数据是按时间排序的），但如果是追加，我们希望最新的排在前面
             // rawData 默认是旧 -> 新 (appendRow)
-            // 我们希望聚合后的列表，如果是同一个人，位置取决于最后一次更新
             
             rawData.forEach(item => {
                 const key = `${item.class}_${item.name}`;
+                // Check for local override first
+                const overrideVal = localStorage.getItem(OVERRIDE_KEY + key);
+                
+                // Base quantity from current item
                 const qty = parseInt(item.qty) || 0;
                 
                 if (map.has(key)) {
-                    // 如果已存在，累加数量，并更新引用到最新（Map set 会更新 value 但不改变 insertion order，除非 delete 再 set）
                     const existing = map.get(key);
-                    existing.qty += qty;
-                    // 为了让其在 Map 迭代中排到最后（代表最新），我们重新插入
+                    // Cumulative logic for standard items
+                    if (overrideVal === null) {
+                        existing.qty += qty;
+                    }
+                    // If overridden, we don't sum, we just ensure the entry exists. 
+                    // However, to keep it simple: if overridden, the value is fixed. 
+                    // But we still want to move it to the "latest" position visually if new data comes in?
+                    // Actually, if overridden, the teacher set a fixed value. 
+                    // Let's just use the override value if present, otherwise sum.
+                    
+                    // Re-insert to update order (simulating "latest activity" if we were tracking timestamps, but for admin view alphabetical is better)
                     map.delete(key);
                     map.set(key, existing);
                 } else {
-                    map.set(key, { ...item, qty: qty }); // Clone item to avoid mutation
+                    // New entry
+                    let finalQty = qty;
+                    let isModified = false;
+                    if (overrideVal !== null) {
+                        finalQty = parseInt(overrideVal);
+                        isModified = true;
+                    }
+                    map.set(key, { ...item, qty: finalQty, isModified: isModified }); 
                 }
             });
-            return Array.from(map.values());
+            
+            // Second pass: Ensure overrides that might have been summed are applied correctly?
+            // Actually, the above sum logic (existing.qty += qty) breaks if we want to support overrides.
+            // If an override exists, it should supersede ALL summation for that student.
+            // Let's refactor: Sum first, THEN apply overrides.
+            
+            const sumMap = new Map();
+            rawData.forEach(item => {
+                const key = `${item.class}_${item.name}`;
+                const qty = parseInt(item.qty) || 0;
+                if(sumMap.has(key)) {
+                    sumMap.get(key).qty += qty;
+                } else {
+                    sumMap.set(key, { ...item, qty: qty });
+                }
+            });
+            
+            // Apply overrides
+            sumMap.forEach((val, key) => {
+                const overrideVal = localStorage.getItem(OVERRIDE_KEY + key);
+                if (overrideVal !== null) {
+                    val.qty = parseInt(overrideVal);
+                    val.isModified = true;
+                }
+            });
+            
+            return Array.from(sumMap.values());
         }
 
         async function fetchData() {
@@ -563,8 +608,6 @@
 
         function render() {
             const t = I18N[curLang];
-            // 总数计算使用 rawData 还是 aggregatedData 结果是一样的，只要聚合逻辑正确
-            // 使用 aggregatedData 计算总数更稳妥
             const total = aggregatedData.reduce((s, i) => s + (parseInt(i.qty) || 0), 0);
             const perc = Math.min(Math.floor((total/TARGET)*100), 100);
             
@@ -583,8 +626,7 @@
                 status.innerText = t.statusDone;
             }
 
-            // Render Honor Roll: Use Aggregated Data, Reversed (Newest First)
-            const listData = [...aggregatedData].reverse().slice(0, 50);
+            const listData = [...aggregatedData].reverse().slice(0, 50); // Show recent activity based on aggregation order (simplified)
             const honorContainer = document.getElementById('honorList');
             if (listData.length === 0) {
                 honorContainer.innerHTML = '<div class="text-center text-xs text-red-300 py-4">...</div>';
@@ -600,14 +642,12 @@
                         </div>
                     </div>
                 `).join('');
-                
                 honorContainer.innerHTML = itemsHtml + (listData.length > 4 ? itemsHtml : ''); 
             }
         }
 
         function renderAdminList() {
             const filterClass = document.getElementById('adminClassFilter').value;
-            // 使用 Aggregated Data 进行管理列表渲染
             let sorted = [...aggregatedData].sort((a,b) => a.class.localeCompare(b.class) || a.name.localeCompare(b.name));
             
             if (filterClass !== "ALL") {
@@ -622,6 +662,7 @@
                 const key = `${CHECK_KEY}${item.class}_${item.name}`;
                 const isChecked = localStorage.getItem(key) === "true";
                 const qty = parseInt(item.qty) || 0;
+                const isModified = item.isModified || false;
                 
                 totalPledged += qty;
                 if (isChecked) totalReceived += qty;
@@ -631,7 +672,10 @@
                     <td class="py-3 font-bold text-red-900">${item.class}</td>
                     <td class="py-3 text-red-800 text-xs md:text-sm font-medium">${item.name}</td>
                     <td class="py-3 text-center">
-                        <span class="font-bold text-red-600">${qty}</span>
+                        <input type="number" 
+                               value="${qty}" 
+                               onchange="updateLocalQty('${item.name}', '${item.class}', this.value)"
+                               class="w-12 text-center bg-transparent border-b border-red-200 focus:border-red-600 focus:outline-none font-bold ${isModified ? 'text-amber-600' : 'text-red-600'}">
                     </td>
                     <td class="py-3 text-center">
                         <input type="checkbox" 
@@ -642,7 +686,6 @@
                 </tr>
             `}).join('');
 
-            // 更新统计数据
             if(document.getElementById('adminTotalPledged')) {
                 document.getElementById('adminTotalPledged').innerText = totalPledged;
                 document.getElementById('adminTotalReceived').innerText = totalReceived;
@@ -655,8 +698,14 @@
             renderAdminList(); 
         };
 
-        // 移除客户端修改数量功能，因为使用了聚合数据，修改本地聚合数据比较复杂且无法同步回 Google Sheet
-        // 老师若要修改数量，建议在 Google Sheet 中操作
+        window.updateLocalQty = (name, cls, newQty) => {
+            const key = OVERRIDE_KEY + cls + "_" + name;
+            localStorage.setItem(key, newQty);
+            // Re-aggregate immediately to update UI without waiting for fetch
+            aggregatedData = aggregateData(rawData); 
+            render();
+            renderAdminList();
+        };
 
         window.handleSponsorship = async () => {
             const t = I18N[curLang];
@@ -678,9 +727,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: name, class: cls, qty: qty })
                 });
-                // Optimistic UI Update (Push raw, then aggregation will handle it on next cycle or manual trigger)
                 rawData.push({ name: name, class: cls, qty: qty });
-                aggregatedData = aggregateData(rawData); // Re-aggregate immediately
+                aggregatedData = aggregateData(rawData); 
                 render(); 
                 fireConfetti();
                 document.getElementById('studentName').value = "";
@@ -722,7 +770,6 @@
 
         window.downloadCSV = () => {
             let csv = `\uFEFF${I18N[curLang].thClass},${I18N[curLang].thName},${I18N[curLang].thQty}\n`;
-            // 导出也是导出的合并后数据
             aggregatedData.forEach(i => csv += `${i.class},${i.name},${i.qty}\n`);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
