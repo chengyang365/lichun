@@ -113,7 +113,7 @@
     <div class="fixed top-4 right-4 z-50 flex gap-2">
         <button onclick="toggleLanguage()" class="lang-switch px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transition-transform active:scale-95 hover:bg-white h-10 ring-1 ring-red-100">
             <span class="text-xs font-bold" id="langLabel">CN / BM</span>
-            <div class="w-4 h-4 rounded-full bg-red-600 flex items-center justify-center text-[8px] text-white font-bold">
+            <div class="w-4 h-4 rounded-full bg-red- flex items-center justify-center text-[8px] text-white font-bold">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
             </div>
         </button>
@@ -215,7 +215,7 @@
                     <p data-i18n="statsLabel" class="text-[10px] font-bold text-red-800/50 uppercase tracking-[0.2em]">已汇聚心意</p>
                     <div class="flex items-baseline">
                         <span id="currentCount" class="text-5xl font-black text-red-700 tracking-tighter">0</span>
-                        <span data-i18n="statsUnit" class="text-red-800/40 font-bold ml-2 text-sm">/ 600 颗</span>
+                        <span data-i18n="statsUnit" class="text-red-800/40 font-bold ml-2 text-sm">/ 688 颗</span>
                     </div>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-red-50 to-white rounded-2xl flex items-center justify-center shadow-inner border border-red-50">
@@ -387,7 +387,7 @@
         // 自动关闭配置 (2026年2月2日 21:00)
         const CLOSING_TIME = new Date("2026-02-02T21:00:00").getTime();
         const EVENT_DATE = new Date("2026-02-04T08:00:00").getTime();
-        const TARGET = 600;
+        const TARGET = 688;
         
         let curLang = 'zh';
         let rawData = [];
@@ -401,7 +401,7 @@
                 eventDateInfo: "活动：2月4日 (三) 8:00 AM",
                 labelDay: "天", labelHour: "时", labelMin: "分", meaningTitle: "🌟 立蛋寓意",
                 meaningText: "象征接收天地阳气，预示全年好运、学业进步、平安吉祥。", statsLabel: "已汇聚心意",
-                statsUnit: "/ 600 颗", statusEmpty: "新春伊始，静候佳音...", statusProg: "春意正浓，还差 {diff} 颗目标达成！",
+                statsUnit: "/ 688 颗", statusEmpty: "新春伊始，静候佳音...", statusProg: "春意正浓，还差 {diff} 颗目标达成！",
                 statusDone: "🎉 万象更新！目标已达成，感恩支持！", formTitle: "赞助登记", labelName: "学生姓名",
                 phName: "姓名", labelClass: "所属班级", phClass: "请选择班级", labelQty: "赞助数量 (颗)",
                 phEggCount: "5 / 10 / 30 / 60", btnSubmit: "递交这份心意", adminTitle: "管理后台", btnExport: "导出 CSV",
@@ -420,7 +420,7 @@
                 eventDateInfo: "Acara: 4 Feb (Rabu) 8:00 Pagi",
                 labelDay: "Hari", labelHour: "Jam", labelMin: "Minit", meaningTitle: "🌟 Simbolik",
                 meaningText: "Melambangkan keseimbangan tenaga alam, membawa tuah, kejayaan akademik, dan keharmonian.", statsLabel: "Sumbangan Terkumpul",
-                statsUnit: "/ 600 Biji", statusEmpty: "Tahun baru bermula, menanti sumbangan...", statusProg: "Semangat membara, kurang {diff} biji lagi!",
+                statsUnit: "/ 688 Biji", statusEmpty: "Tahun baru bermula, menanti sumbangan...", statusProg: "Semangat membara, kurang {diff} biji lagi!",
                 statusDone: "🎉 Tahniah! Sasaran tercapai dengan jayanya!", formTitle: "Pendaftaran Penajaan", labelName: "Nama Murid",
                 phName: "Nama Penuh", labelClass: "Kelas", phClass: "Pilih Kelas", labelQty: "Bilangan Tajaan (Biji)",
                 phEggCount: "5 / 10 / 30 / 60", btnSubmit: "Hantar Sumbangan", adminTitle: "Panel Admin", btnExport: "Eksport CSV",
